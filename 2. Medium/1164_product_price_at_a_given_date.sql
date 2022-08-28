@@ -63,10 +63,12 @@ ON P.product_id = M.product_id
 -- What I learned 
 1) PARTITION BY/ OVER: conduct aggregation function even though it's not in the GROUP BY Clause' 
 SELECT Customercity, 
-       AVG(Orderamount) OVER(PARTITION BY Customercity) AS AvgOrderAmount, 
-       MIN(OrderAmount) OVER(PARTITION BY Customercity) AS MinOrderAmount, 
-       SUM(Orderamount) OVER(PARTITION BY Customercity) TotalOrderAmount
+       AVG(Orderamount) OVER (PARTITION BY Customercity) AS AvgOrderAmount, 
+       MIN(OrderAmount) OVER (PARTITION BY Customercity) AS MinOrderAmount, 
+       SUM(Orderamount) OVER (PARTITION BY Customercity) TotalOrderAmount
 FROM [dbo].[Orders];
 
-2) RANK()
-3) DENSE_RANK()
+2) RANK() should be used with OVER (PARTITION BY ... (ORDER BY )): 
+- it shows the rank of the row based on the PARTITION BY Column 
+3) RANK() : if there are n multiple rows with same rank, next rank starts from +n rank 
+3) DENSE_RANK() : if there are n multiple rows with same rank, next rank starts from +1 rank 
