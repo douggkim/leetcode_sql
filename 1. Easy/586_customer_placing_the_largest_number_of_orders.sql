@@ -83,4 +83,4 @@ GROUP BY customer_number
 ORDER BY COUNT(*) DESC
 LIMIT 1
 2) You use HAVING for GROUP BY Clauses 
-3) In MySQL you do not have to use the {column} which is used in GROUP BY clause 
+3) In MySQL you can SELECT {column}s which are not used in GROUP BY clause 
