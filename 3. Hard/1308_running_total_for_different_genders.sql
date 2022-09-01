@@ -78,7 +78,7 @@ ORDER BY S.gender ASC, S.day ASC
 SELECT GS1.gender, GS1.day, (SELECT SUM(score_point) FROM GroupScore GS2 WHERE GS2.day <= GS1.day AND GS2.gender= GS1.gender) AS total
 FROM GroupScore GS1
 
--- Other people's answer 
+-- Other people's answers
 select gender, day,
 sum(score_points) over(partition by gender order by day) as total
 from Scores;
