@@ -74,7 +74,25 @@ FROM FriendTable FT
 WHERE FT.common_friend >= 3 
 AND CONCAT(FT.user1_id, ",", FT.user2_Id) IN (SELECT CONCAT(FTT.user1_id, ",", FTT.user2_id) FROM FriendShip FTT)
 
+-- Alternative Answers 
+WITH t AS (SELECT user1_id, user2_id FROM Friendship
+           UNION
+           SELECT user2_id, user1_id FROM Friendship),
+t2 AS (SELECT t.user1_id AS user1_id, t.user2_id AS user2_id, 
+       CASE WHEN (t.user1_id, t1.user2_id) IN (SELECT* FROM t) 
+       THEN t1.user2_id ELSE null END AS common
+       FROM t
+       LEFT JOIN t AS t1 ON (t.user2_id=t1.user1_id)
+       HAVING user1_id < user2_id AND common IS NOT NULL)
+
+SELECT user1_id , user2_id, COUNT(*) AS common_friend
+FROM t2
+GROUP BY user1_id, user2_id
+HAVING common_friend >= 3
 
 -- What I learned 
 1) Be aware when using CONCAT because there could be cases like this: 
 1,51 <-> 15,1
+
+2) You could compare multiple variables with IN clause
+CASE WHEN (t.user1_id, t1.user2_id) IN (SELECT* FROM t) 
