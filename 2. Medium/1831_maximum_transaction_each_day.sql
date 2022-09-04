@@ -60,5 +60,15 @@ WHERE T.amount = MD.max_amount
 AND DATE_FORMAT(T.day, '%Y-%m-%d') = MD.trans_date
 ORDER BY transaction_id ASC 
 
+-- Alternative Answer 
+WITH RankTable AS 
+(SELECT transaction_id, RANK() OVER(PARTITION BY DATE(day) ORDER BY amount DESC) AS rnk
+FROM Transacitons T )
+
+SELECT transaction_id
+FROM RankTable RT
+WHERE rnk = 1
+
 -- What I learned 
 1) When Using CTE to compare max values, be aware of duplicate rows. 
+2) DATE({date_column}) : returns the date column in %Y-%m-%d format.
