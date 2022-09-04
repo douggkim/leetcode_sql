@@ -53,7 +53,8 @@ Users 1 and 2 have 4 common friends (3, 4, 5, and 6).
 Users 1 and 3 have 3 common friends (2, 6, and 7).
 We did not include the friendship of users 2 and 3 because they only have two common friends (1 and 6).
 
-# Write your MySQL query statement below
+
+-- My Answer 
 WITH FriendshipTotal AS 
 (SELECT user2_id AS "user1_id", user1_id AS "user2_id"
 From FriendShip F
@@ -71,25 +72,9 @@ GROUP BY F1.user1_id, F2.user1_id)
 SELECT DISTINCT FT.user1_id, FT.user2_id, common_friend
 FROM FriendTable FT
 WHERE FT.common_friend >= 3 
-AND CONCAT(FT.user1_id, FT.user2_Id) IN (SELECT CONCAT(FTT.user1_id, FTT.user2_id) FROM FriendshipTotal FTT)
+AND CONCAT(FT.user1_id, ",", FT.user2_Id) IN (SELECT CONCAT(FTT.user1_id, ",", FTT.user2_id) FROM FriendShip FTT)
 
 
-# Write your MySQL query statement below
-WITH FriendshipTotal AS 
-(SELECT user2_id AS "user1_id", user1_id AS "user2_id"
-From FriendShip F
-UNION 
-SELECT * 
-FROM Friendship F),
-FriendTable AS 
-(SELECT F1.user1_id, F2.user1_id AS "user2_id", COUNT(*) AS common_friend 
-FROM FriendshipTotal F1, FriendshipTotal F2 
-WHERE 1=1 
-AND F1.user2_id = F2.user2_id 
-AND F1.user1_id < F2.user1_id
-GROUP BY F1.user1_id, F2.user1_id)
-
-SELECT DISTINCT FT.user1_id, FT.user2_id, common_friend
-FROM FriendshipTotal FT
-WHERE FT.user1_id = 1 
-OR FT.user1_id = 51
+-- What I learned 
+1) Be aware when using CONCAT because there could be cases like this: 
+1,51 <-> 15,1
