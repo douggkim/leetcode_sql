@@ -74,3 +74,8 @@ SELECT MML1.caller_id user_id
 FROM MinMaxLabels MML1
 WHERE 1=1 
 AND MML1.max_min_caller= 'same'
+
+
+-- What I learned 
+1) You have to be careful when using CASE clause. Some conditions might never be triggered if placed behind. 
+2) If you have to compare both min and max values at once, you should probably use PARTITION BY then GROUP BY. 
