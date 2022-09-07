@@ -18,8 +18,6 @@ Return the result table in any order.
 
 The query result format is in the following example.
 
- 
-
 Example 1:
 
 Input: 
@@ -49,3 +47,18 @@ Users 1 and 7 have three common followers (3, 4, and 5).
 Users 2 and 7 have two common followers (3 and 4).
 Since the maximum number of common followers between any two users is 3, we return all pairs of users with three common followers, which is only the pair (1, 7). We return the pair as (1, 7), not as (7, 1).
 Note that we do not have any information about the users that follow users 3, 4, and 5, so we consider them to have 0 followers.
+
+-- MY Answer 
+WITH CommonCountTable AS 
+(SELECT R1.user_id user1_id, R2.user_id user2_id, COUNT(R1.follower_id) follower_count
+FROM Relations R1, Relations R2 
+WHERE R1.follower_id = R2.follower_id 
+AND R1.user_id < R2.user_id
+GROUP BY R1.user_id, R2.user_id),
+RankCountTable AS 
+(SELECT CCT.user1_id, CCT.user2_id, RANK() OVER (ORDER BY follower_count DESC) follower_rank
+FROM CommonCountTable CCT) 
+
+SELECT user1_id, user2_id
+FROM RankCountTable 
+WHERE follower_rank = 1

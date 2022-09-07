@@ -56,17 +56,42 @@ Making the biggest window the one with 65 days.
 For the third user, the only window in question is between dates 2020-11-11 and 2021-1-1 with a total of 51 days.
 
 -- My Answer
-WITH IntervalCount AS 
-(SELECT user_id, visit_date,DATEDIFF(visit_date, LAG(visit_date) OVER (PARTITION BY user_id ORDER BY visit_date ASC)) interval_count, DATEDIFF(STR_TO_DATE('2021-01-01','%Y-%m-%d'), MAX(visit_date) OVER (PARTITION BY user_id)) latest_count
-FROM UserVisits UV 
-ORDER BY user_id ASC, visit_date ASC),
-RankTable AS 
-(SELECT user_id, visit_date, IF(interval_count> latest_count,interval_count, latest_count) interval_count, RANK() OVER (PARTITION BY user_id ORDER BY interval_count DESC) window_ranking
-FROM IntervalCount)
-
-SELECT DISTINCT user_id, interval_count biggest_window
+WITH IntervalCount AS (
+    SELECT user_id,
+        visit_date,
+        DATEDIFF(
+            visit_date,
+            LAG(visit_date) OVER (
+                PARTITION BY user_id
+                ORDER BY visit_date ASC
+            )
+        ) interval_count,
+        DATEDIFF(
+            STR_TO_DATE('2021-01-01', '%Y-%m-%d'),
+            MAX(visit_date) OVER (PARTITION BY user_id)
+        ) latest_count
+    FROM UserVisits UV
+    ORDER BY user_id ASC,
+        visit_date ASC
+),
+RankTable AS (
+    SELECT user_id,
+        visit_date,
+        IF(
+            interval_count > latest_count,
+            interval_count,
+            latest_count
+        ) interval_count,
+        RANK() OVER (
+            PARTITION BY user_id
+            ORDER BY interval_count DESC
+        ) window_ranking
+    FROM IntervalCount
+)
+SELECT DISTINCT user_id,
+    interval_count biggest_window
 FROM RankTable
-WHERE window_ranking = 1 
+WHERE window_ranking = 1
 
 -- What I learned 
 1) DATEDIFF({date column}, {date column}) : the order is important when using DATEDIFF function.  
