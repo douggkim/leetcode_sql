@@ -18,6 +18,14 @@ The test cases are generated so that the student number from America is not less
 
 The query result format is in the following example.
 
+SELECT RowNum AS 
+(SELECT S.* ROW_NUMBER() OVER (PARTITION BY S.continent ORDER BY S.name) rownum
+FROM Student S)
+
+SELECT MAX(CASE WHEN continent='America' THEN S.name) America,MAX(CASE WHEN continent='Asia' THEN S.name) Asia, MAX(CASE WHEN continent='Europe' THEN S.name) Europe
+FROM RowNum S
+GROUP BY rownum
+
  
 
 Example 1:
