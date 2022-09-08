@@ -15,6 +15,15 @@ The median is the value separating the higher half from the lower half of a data
 Write an SQL query to report the median of all the numbers in the database after decompressing the Numbers table. Round the median to one decimal point.
 
 The query result format is in the following example.
+WITH RevisedTable AS 
+(SELECT N.*, SUM(frequency) OVER (ORDER BY num ASC) accum, SUM(frequency) OVER () total 
+FROM Numbers N)
+
+
+SELECT ROUND(AVG(RT.num),1) AS median 
+FROM RevisedTable RT 
+WHERE total/2 <= accum
+AND total/2 >= accum-frequency
 
 
 Example 1:
